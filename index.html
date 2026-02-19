@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch 定時發話</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://marsantony.github.io/shared/nav.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background: linear-gradient(180deg, #dcdfe4 0%, #d4d7dd 30%, #cfd2d8 70%, #c9ccd3 100%);
+            background-attachment: fixed;
+            color: #5a5f6b;
+            line-height: 1.6;
+            padding-top: 56px;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3a3f4a;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #c0c3c9;
+        }
+
+        /* ── Form ── */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #3a3f4a;
+            margin-bottom: 0.4rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 12px;
+            background: #d4d7dd;
+            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: #3a3f4a;
+            outline: none;
+            transition: box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: inset 4px 4px 8px #a8abb1, inset -4px -4px 8px #fafbfd;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5f6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        /* ── Buttons ── */
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin: 1.5rem 0;
+        }
+
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            background: #d4d7dd;
+            box-shadow: 4px 4px 8px #b0b3b9, -4px -4px 8px #f5f6f8;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+        }
+
+        .btn:active {
+            box-shadow: inset 4px 4px 8px #a8abb1, inset -4px -4px 8px #fafbfd;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: 2px 2px 4px #b0b3b9, -2px -2px 4px #f5f6f8;
+        }
+
+        .btn:disabled:hover {
+            box-shadow: 2px 2px 4px #b0b3b9, -2px -2px 4px #f5f6f8;
+        }
+
+        .btn-success { color: #2d7a4f; }
+        .btn-primary { color: #3a6fb5; }
+        .btn-danger  { color: #c0392b; }
+        .btn-sm {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            box-shadow: 3px 3px 6px #b0b3b9, -3px -3px 6px #f5f6f8;
+        }
+
+        .auth-hint {
+            font-size: 0.8rem;
+            color: #c0392b;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* ── Auth ── */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            background: #d4d7dd;
+            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+        }
+
+        .auth-section .auth-username {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #3a3f4a;
+            flex: 1;
+        }
+
+        .auth-section .btn {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+            box-shadow: 3px 3px 6px #b0b3b9, -3px -3px 6px #f5f6f8;
+        }
+
+        /* ── Notice Box ── */
+        .notice-box {
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            background: #d4d7dd;
+            box-shadow: 4px 4px 8px #b0b3b9, -4px -4px 8px #f5f6f8;
+            overflow: hidden;
+        }
+
+        .notice-box summary {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #c0392b;
+            cursor: pointer;
+            list-style: none;
+            border-left: 4px solid #c0392b;
+        }
+
+        .notice-box summary::-webkit-details-marker { display: none; }
+
+        .notice-box summary::after {
+            content: '▸';
+            float: right;
+            transition: transform 0.2s;
+        }
+
+        .notice-box[open] summary::after {
+            transform: rotate(90deg);
+        }
+
+        .notice-box[open] summary {
+            border-bottom: 1px solid #c0c3c9;
+        }
+
+        .notice-body {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.83rem;
+            line-height: 1.8;
+        }
+
+        .notice-body code {
+            background: #c8cbd1;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .notice-body ol {
+            padding-left: 1.25rem;
+        }
+
+        .notice-body li {
+            margin-bottom: 0.3rem;
+        }
+
+        .throttle-status {
+            margin-top: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            background: #d4d7dd;
+            box-shadow: inset 2px 2px 4px #b0b3b9, inset -2px -2px 4px #f5f6f8;
+            font-size: 0.83rem;
+        }
+
+        .throttle-status label {
+            font-weight: 600;
+            color: #3a3f4a;
+            margin-right: 0.5rem;
+        }
+
+        .status-ok { color: #2d7a4f; font-weight: 600; }
+        .status-warning { color: #b8860b; font-weight: 600; }
+        .status-throttled { color: #c0392b; font-weight: 600; }
+
+        /* ── Message Cards ── */
+        .msg-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .msg-card {
+            border-radius: 12px;
+            background: #d4d7dd;
+            box-shadow: 4px 4px 8px #b0b3b9, -4px -4px 8px #f5f6f8;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .msg-card.disabled {
+            opacity: 0.5;
+        }
+
+        .msg-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .msg-card-content {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #3a3f4a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .msg-card-schedule {
+            font-size: 0.8rem;
+            color: #8a8f9a;
+            margin-bottom: 0.4rem;
+        }
+
+        .msg-card-schedule .next-send {
+            color: #3a6fb5;
+            font-weight: 600;
+        }
+
+        .msg-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        /* ── Toggle Switch ── */
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #c0c3c9;
+            border-radius: 22px;
+            transition: 0.2s;
+            box-shadow: inset 2px 2px 4px #a8abb1, inset -2px -2px 4px #d8dbe1;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background: #d4d7dd;
+            border-radius: 50%;
+            transition: 0.2s;
+            box-shadow: 2px 2px 4px #b0b3b9, -1px -1px 3px #f5f6f8;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: #2d7a4f;
+        }
+
+        .toggle input:checked + .toggle-slider::before {
+            transform: translateX(18px);
+        }
+
+        /* ── Message Editor ── */
+        .msg-editor {
+            display: none;
+            border-radius: 12px;
+            background: #d4d7dd;
+            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .msg-editor.active {
+            display: block;
+        }
+
+        .msg-editor h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #3a3f4a;
+            margin-bottom: 0.75rem;
+        }
+
+        .msg-editor .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        .editor-schedule-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .editor-schedule-row .form-group {
+            flex: 1;
+        }
+
+        .editor-schedule-row input[type="number"] {
+            width: 100%;
+        }
+
+        /* ── Connection Status ── */
+        .connection-status {
+            margin-bottom: 0.75rem;
+        }
+
+        .connection-status label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8a8f9a;
+        }
+
+        .connection-status span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-connected { color: #2d7a4f; }
+        .status-disconnected { color: #8a8f9a; }
+
+        /* ── Footer ── */
+        footer {
+            border-top: 1px solid #c0c3c9;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        footer small {
+            font-size: 0.75rem;
+            color: #8a8f9a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Twitch 定時發話</h1>
+
+        <!-- 頻道選擇 -->
+        <div class="form-group">
+            <label for="channel">頻道</label>
+            <select id="channel">
+                <option value="shuteye_orange">蝦愛橘子</option>
+                <option value="marsantonymars">姬柊雪菜我老婆</option>
+            </select>
+        </div>
+
+        <!-- 登入/登出 -->
+        <div id="authSection">
+            <div id="authLoggedOut" class="form-group">
+                <button type="button" id="twitchLogin" class="btn btn-primary">使用 Twitch 登入</button>
+            </div>
+            <div id="authLoggedIn" class="auth-section" style="display:none;">
+                <span class="auth-username" id="authUsername"></span>
+                <button type="button" id="twitchLogout" class="btn btn-danger">登出</button>
+            </div>
+        </div>
+
+        <!-- 瀏覽器設定提醒 -->
+        <details class="notice-box" open>
+            <summary>重要：瀏覽器設定建議</summary>
+            <div class="notice-body">
+                <p>為確保定時發話準確運作，建議進行以下設定：</p>
+                <ol>
+                    <li>在網址列輸入 <code>chrome://flags/#intensive-wake-up-throttling</code>，設為 <strong>Disabled</strong></li>
+                    <li><strong>釘選此分頁</strong>（右鍵分頁 → 釘選）</li>
+                    <li>盡量<strong>保持此分頁為可見狀態</strong>，不要最小化</li>
+                </ol>
+                <p>定時器運行在 Web Worker 中，受背景節流的影響較小，但以上設定可進一步提升穩定度。</p>
+                <div class="throttle-status">
+                    <label>主線程狀態：</label>
+                    <span id="throttleStatus" class="status-ok">正常運作中</span>
+                </div>
+            </div>
+        </details>
+
+        <!-- 訊息列表 -->
+        <div class="form-group">
+            <label>定時訊息列表</label>
+        </div>
+        <div id="messageList" class="msg-list"></div>
+        <div class="btn-row" style="justify-content: flex-start;">
+            <button type="button" id="addMessageBtn" class="btn btn-primary btn-sm">+ 新增訊息</button>
+        </div>
+
+        <!-- 訊息編輯器 -->
+        <div id="messageEditor" class="msg-editor">
+            <h3 id="editorTitle">新增訊息</h3>
+            <input type="hidden" id="editorMsgId" value="">
+
+            <div class="form-group">
+                <label for="editorContent">訊息內容</label>
+                <textarea id="editorContent" rows="3" placeholder="輸入要定時發送的訊息..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="editorMode">排程模式</label>
+                <select id="editorMode">
+                    <option value="fixed">固定間隔</option>
+                    <option value="random">隨機範圍</option>
+                </select>
+            </div>
+
+            <div id="editorFixedGroup" class="form-group">
+                <label for="editorFixedInterval">間隔（分鐘）</label>
+                <input type="number" id="editorFixedInterval" min="1" value="10">
+            </div>
+
+            <div id="editorRandomGroup" style="display:none;">
+                <div class="editor-schedule-row">
+                    <div class="form-group">
+                        <label for="editorRandomMin">最小（分鐘）</label>
+                        <input type="number" id="editorRandomMin" min="1" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="editorRandomMax">最大（分鐘）</label>
+                        <input type="number" id="editorRandomMax" min="2" value="15">
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button type="button" id="editorCancel" class="btn">取消</button>
+                <button type="button" id="editorSave" class="btn btn-success">儲存</button>
+            </div>
+        </div>
+
+        <!-- 連線狀態 & 控制 -->
+        <p class="auth-hint" id="authHint">請先登入 Twitch 才能使用以下功能</p>
+        <div class="connection-status">
+            <label>連線狀態：</label>
+            <span id="connectionStatus" class="status-disconnected">未連線</span>
+        </div>
+        <div class="btn-row">
+            <button type="button" id="startAll" class="btn btn-success" disabled>開始全部</button>
+            <button type="button" id="stopAll" class="btn btn-danger" style="display:none;">停止全部</button>
+        </div>
+
+        <!-- 活動日誌 -->
+        <div class="form-group">
+            <label for="log">活動日誌</label>
+            <textarea id="log" rows="10" readonly></textarea>
+        </div>
+
+        <footer>
+            <small>Twitch 定時發話工具</small>
+        </footer>
+    </div>
+
+    <script src="https://marsantony.github.io/shared/twitch-auth.js"></script>
+    <script src="./js/tmi.min.js"></script>
+    <script src="./src/utils.js"></script>
+    <script src="./src/messageStore.js"></script>
+    <script src="./src/throttleDetector.js"></script>
+    <script src="./src/timedMessageManager.js"></script>
+
+    <script src="https://marsantony.github.io/shared/shared.js"></script>
+    <script>
+        var CLIENT_ID = '1qewxbrcvgrcpxqhqecxuitqwgjc2p';
+        var manager = new TimedMessageManager();
+        var detector = new ThrottleDetector('throttleStatus');
+        var countdownIntervalId = null;
+
+        detector.start();
+
+        // ── Auth UI ──
+        function updateAuthUI() {
+            var loggedIn = TwitchAuth.isLoggedIn();
+
+            if (loggedIn) {
+                document.getElementById('authLoggedOut').style.display = 'none';
+                document.getElementById('authLoggedIn').style.display = '';
+                document.getElementById('authUsername').textContent = TwitchAuth.getUsername();
+            } else {
+                document.getElementById('authLoggedOut').style.display = '';
+                document.getElementById('authLoggedIn').style.display = 'none';
+            }
+
+            document.getElementById('startAll').disabled = !loggedIn;
+            document.getElementById('authHint').style.display = loggedIn ? 'none' : '';
+        }
+
+        document.getElementById('twitchLogin').addEventListener('click', function () {
+            TwitchAuth.login(CLIENT_ID);
+        });
+
+        document.getElementById('twitchLogout').addEventListener('click', function () {
+            if (manager.isRunning) {
+                manager.stop();
+                updateRunningUI(false);
+            }
+            TwitchAuth.logout();
+            updateAuthUI();
+        });
+
+        // ── Channel persistence ──
+        var savedChannel = localStorage.getItem(STORAGE_CHANNEL);
+        if (savedChannel) {
+            document.getElementById('channel').value = savedChannel;
+        }
+        document.getElementById('channel').addEventListener('change', function () {
+            localStorage.setItem(STORAGE_CHANNEL, this.value);
+        });
+
+        // ── Message List Rendering ──
+        function renderMessageList() {
+            var messages = loadMessages();
+            var container = document.getElementById('messageList');
+            container.innerHTML = '';
+
+            messages.forEach(function (msg) {
+                var card = document.createElement('div');
+                card.className = 'msg-card' + (msg.enabled ? '' : ' disabled');
+                card.dataset.msgId = msg.id;
+
+                var scheduleText = '';
+                if (msg.scheduleMode === 'fixed') {
+                    scheduleText = '固定間隔 ' + msg.fixedIntervalMinutes + ' 分鐘';
+                } else {
+                    scheduleText = '隨機 ' + msg.randomMinMinutes + '~' + msg.randomMaxMinutes + ' 分鐘';
+                }
+
+                card.innerHTML =
+                    '<div class="msg-card-header">' +
+                        '<label class="toggle">' +
+                            '<input type="checkbox" data-toggle-id="' + msg.id + '"' + (msg.enabled ? ' checked' : '') + '>' +
+                            '<span class="toggle-slider"></span>' +
+                        '</label>' +
+                        '<span class="msg-card-content">' + escapeHtml(msg.content) + '</span>' +
+                    '</div>' +
+                    '<div class="msg-card-schedule">' +
+                        scheduleText +
+                        (msg.enabled && manager.isRunning ? ' | 下次發送：<span class="next-send" data-next-send-at=""></span>' : '') +
+                    '</div>' +
+                    '<div class="msg-card-actions">' +
+                        '<button type="button" class="btn btn-sm btn-primary" data-edit-id="' + msg.id + '">編輯</button>' +
+                        '<button type="button" class="btn btn-sm btn-danger" data-delete-id="' + msg.id + '">刪除</button>' +
+                    '</div>';
+
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ── Message List Event Delegation ──
+        document.getElementById('messageList').addEventListener('click', function (e) {
+            var target = e.target;
+
+            // Toggle
+            if (target.dataset.toggleId) {
+                toggleMessage(target.dataset.toggleId);
+                renderMessageList();
+                manager.refreshMessages();
+                return;
+            }
+
+            // Edit
+            var editId = target.dataset.editId;
+            if (editId) {
+                openEditor(editId);
+                return;
+            }
+
+            // Delete
+            var deleteId = target.dataset.deleteId;
+            if (deleteId) {
+                deleteMessage(deleteId);
+                renderMessageList();
+                manager.refreshMessages();
+            }
+        });
+
+        document.getElementById('messageList').addEventListener('change', function (e) {
+            if (e.target.dataset.toggleId) {
+                toggleMessage(e.target.dataset.toggleId);
+                renderMessageList();
+                manager.refreshMessages();
+            }
+        });
+
+        // ── Message Editor ──
+        document.getElementById('addMessageBtn').addEventListener('click', function () {
+            openEditor(null);
+        });
+
+        document.getElementById('editorMode').addEventListener('change', function () {
+            var isFixed = this.value === 'fixed';
+            document.getElementById('editorFixedGroup').style.display = isFixed ? '' : 'none';
+            document.getElementById('editorRandomGroup').style.display = isFixed ? 'none' : '';
+        });
+
+        document.getElementById('editorCancel').addEventListener('click', function () {
+            closeEditor();
+        });
+
+        document.getElementById('editorSave').addEventListener('click', function () {
+            var msgId = document.getElementById('editorMsgId').value;
+            var content = document.getElementById('editorContent').value.trim();
+            if (!content) {
+                alert('請輸入訊息內容');
+                return;
+            }
+
+            var mode = document.getElementById('editorMode').value;
+            var data = {
+                content: content,
+                scheduleMode: mode
+            };
+
+            if (mode === 'fixed') {
+                data.fixedIntervalMinutes = Math.max(1, parseInt(document.getElementById('editorFixedInterval').value) || 10);
+            } else {
+                var min = Math.max(1, parseInt(document.getElementById('editorRandomMin').value) || 5);
+                var max = Math.max(min + 1, parseInt(document.getElementById('editorRandomMax').value) || 15);
+                data.randomMinMinutes = min;
+                data.randomMaxMinutes = max;
+            }
+
+            if (msgId) {
+                updateMessage(msgId, data);
+            } else {
+                addMessage(data);
+            }
+
+            renderMessageList();
+            manager.refreshMessages();
+            closeEditor();
+        });
+
+        function openEditor(msgId) {
+            var editor = document.getElementById('messageEditor');
+            editor.classList.add('active');
+
+            if (msgId) {
+                document.getElementById('editorTitle').textContent = '編輯訊息';
+                document.getElementById('editorMsgId').value = msgId;
+
+                var messages = loadMessages();
+                var msg = messages.find(function (m) { return m.id === msgId; });
+                if (msg) {
+                    document.getElementById('editorContent').value = msg.content;
+                    document.getElementById('editorMode').value = msg.scheduleMode;
+                    document.getElementById('editorFixedInterval').value = msg.fixedIntervalMinutes;
+                    document.getElementById('editorRandomMin').value = msg.randomMinMinutes;
+                    document.getElementById('editorRandomMax').value = msg.randomMaxMinutes;
+                    document.getElementById('editorMode').dispatchEvent(new Event('change'));
+                }
+            } else {
+                document.getElementById('editorTitle').textContent = '新增訊息';
+                document.getElementById('editorMsgId').value = '';
+                document.getElementById('editorContent').value = '';
+                document.getElementById('editorMode').value = 'fixed';
+                document.getElementById('editorFixedInterval').value = 10;
+                document.getElementById('editorRandomMin').value = 5;
+                document.getElementById('editorRandomMax').value = 15;
+                document.getElementById('editorMode').dispatchEvent(new Event('change'));
+            }
+        }
+
+        function closeEditor() {
+            document.getElementById('messageEditor').classList.remove('active');
+        }
+
+        // ── Start / Stop ──
+        function updateRunningUI(running) {
+            document.getElementById('startAll').style.display = running ? 'none' : '';
+            document.getElementById('stopAll').style.display = running ? '' : 'none';
+            document.getElementById('channel').disabled = running;
+            document.getElementById('connectionStatus').textContent = running ? '已連線' : '未連線';
+            document.getElementById('connectionStatus').className = running ? 'status-connected' : 'status-disconnected';
+
+            if (running) {
+                startCountdownUpdater();
+            } else {
+                stopCountdownUpdater();
+            }
+
+            renderMessageList();
+        }
+
+        document.getElementById('startAll').addEventListener('click', function () {
+            var messages = loadMessages();
+            var enabledCount = messages.filter(function (m) { return m.enabled; }).length;
+            if (enabledCount === 0) {
+                alert('請至少新增並啟用一則訊息');
+                return;
+            }
+            localStorage.setItem(STORAGE_CHANNEL, document.getElementById('channel').value);
+            manager.start();
+            updateRunningUI(true);
+            addLog(document.getElementById('log'), formatTimestamp() + ' [系統] 已開始定時發話（' + enabledCount + ' 則訊息）');
+        });
+
+        document.getElementById('stopAll').addEventListener('click', function () {
+            manager.stop();
+            updateRunningUI(false);
+            addLog(document.getElementById('log'), formatTimestamp() + ' [系統] 已停止定時發話');
+        });
+
+        // ── Countdown Updater ──
+        function startCountdownUpdater() {
+            stopCountdownUpdater();
+            countdownIntervalId = setInterval(function () {
+                var els = document.querySelectorAll('.next-send[data-next-send-at]');
+                els.forEach(function (el) {
+                    var nextAt = parseInt(el.dataset.nextSendAt);
+                    if (nextAt) {
+                        el.textContent = formatCountdown(nextAt);
+                    } else {
+                        el.textContent = '排程中...';
+                    }
+                });
+            }, 1000);
+        }
+
+        function stopCountdownUpdater() {
+            if (countdownIntervalId) {
+                clearInterval(countdownIntervalId);
+                countdownIntervalId = null;
+            }
+        }
+
+        // ── Init ──
+        renderMessageList();
+        updateAuthUI();
+    </script>
+</body>
+
+</html>
