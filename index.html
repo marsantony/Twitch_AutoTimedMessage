@@ -445,13 +445,13 @@
             <div class="notice-body">
                 <p>為確保定時發話準確運作，建議進行以下設定：</p>
                 <ol>
-                    <li>在網址列輸入 <code>chrome://flags/#intensive-wake-up-throttling</code>，設為 <strong>Disabled</strong></li>
+                    <li>前往 <code>chrome://settings/performance</code>，在「一律讓這些網站保持啟用」新增此頁面的網址</li>
                     <li><strong>釘選此分頁</strong>（右鍵分頁 → 釘選）</li>
                     <li>盡量<strong>保持此分頁為可見狀態</strong>，不要最小化</li>
                 </ol>
                 <p>定時器運行在 Web Worker 中，受背景節流的影響較小，但以上設定可進一步提升穩定度。</p>
                 <div class="throttle-status">
-                    <label>主線程狀態：</label>
+                    <label>頁面狀態（Worker 計時器不受此影響）：</label>
                     <span id="throttleStatus" class="status-ok">正常運作中</span>
                 </div>
             </div>
