@@ -38,9 +38,9 @@ describe('messageStore', () => {
             expect(result).toHaveLength(1);
             expect(result[0].content).toBe('大家好');
             expect(result[0].scheduleMode).toBe('fixed');
-            expect(result[0].fixedIntervalMinutes).toBe(10);
-            expect(result[0].randomMinMinutes).toBe(5);
-            expect(result[0].randomMaxMinutes).toBe(15);
+            expect(result[0].fixedIntervalSeconds).toBe(600);
+            expect(result[0].randomMinSeconds).toBe(300);
+            expect(result[0].randomMaxSeconds).toBe(900);
             expect(result[0].enabled).toBe(true);
             expect(result[0].id).toBeTruthy();
             expect(result[0].createdAt).toBeTruthy();
@@ -50,12 +50,12 @@ describe('messageStore', () => {
             const result = addMessage({
                 content: 'test',
                 scheduleMode: 'random',
-                randomMinMinutes: 3,
-                randomMaxMinutes: 8,
+                randomMinSeconds: 180,
+                randomMaxSeconds: 480,
             });
             expect(result[0].scheduleMode).toBe('random');
-            expect(result[0].randomMinMinutes).toBe(3);
-            expect(result[0].randomMaxMinutes).toBe(8);
+            expect(result[0].randomMinSeconds).toBe(180);
+            expect(result[0].randomMaxSeconds).toBe(480);
         });
 
         it('多次新增產生不同 ID', () => {
@@ -79,9 +79,9 @@ describe('messageStore', () => {
             const messages = loadMessages();
             const id = messages[0].id;
 
-            const result = updateMessage(id, { content: 'updated', fixedIntervalMinutes: 20 });
+            const result = updateMessage(id, { content: 'updated', fixedIntervalSeconds: 1200 });
             expect(result[0].content).toBe('updated');
-            expect(result[0].fixedIntervalMinutes).toBe(20);
+            expect(result[0].fixedIntervalSeconds).toBe(1200);
         });
 
         it('不存在的 ID 不影響資料', () => {

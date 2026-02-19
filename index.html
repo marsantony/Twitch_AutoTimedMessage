@@ -485,19 +485,19 @@
             </div>
 
             <div id="editorFixedGroup" class="form-group">
-                <label for="editorFixedInterval">間隔（分鐘）</label>
-                <input type="number" id="editorFixedInterval" min="1" value="10">
+                <label for="editorFixedInterval">間隔（秒）</label>
+                <input type="number" id="editorFixedInterval" min="1" value="600">
             </div>
 
             <div id="editorRandomGroup" style="display:none;">
                 <div class="editor-schedule-row">
                     <div class="form-group">
-                        <label for="editorRandomMin">最小（分鐘）</label>
-                        <input type="number" id="editorRandomMin" min="1" value="5">
+                        <label for="editorRandomMin">最小（秒）</label>
+                        <input type="number" id="editorRandomMin" min="1" value="300">
                     </div>
                     <div class="form-group">
-                        <label for="editorRandomMax">最大（分鐘）</label>
-                        <input type="number" id="editorRandomMax" min="2" value="15">
+                        <label for="editorRandomMax">最大（秒）</label>
+                        <input type="number" id="editorRandomMax" min="2" value="900">
                     </div>
                 </div>
             </div>
@@ -598,9 +598,9 @@
 
                 var scheduleText = '';
                 if (msg.scheduleMode === 'fixed') {
-                    scheduleText = '固定間隔 ' + msg.fixedIntervalMinutes + ' 分鐘';
+                    scheduleText = '固定間隔 ' + formatSeconds(msg.fixedIntervalSeconds);
                 } else {
-                    scheduleText = '隨機 ' + msg.randomMinMinutes + '~' + msg.randomMaxMinutes + ' 分鐘';
+                    scheduleText = '隨機 ' + formatSeconds(msg.randomMinSeconds) + '~' + formatSeconds(msg.randomMaxSeconds);
                 }
 
                 card.innerHTML =
@@ -696,12 +696,12 @@
             };
 
             if (mode === 'fixed') {
-                data.fixedIntervalMinutes = Math.max(1, parseInt(document.getElementById('editorFixedInterval').value) || 10);
+                data.fixedIntervalSeconds = Math.max(1, parseInt(document.getElementById('editorFixedInterval').value) || 600);
             } else {
-                var min = Math.max(1, parseInt(document.getElementById('editorRandomMin').value) || 5);
-                var max = Math.max(min + 1, parseInt(document.getElementById('editorRandomMax').value) || 15);
-                data.randomMinMinutes = min;
-                data.randomMaxMinutes = max;
+                var min = Math.max(1, parseInt(document.getElementById('editorRandomMin').value) || 300);
+                var max = Math.max(min + 1, parseInt(document.getElementById('editorRandomMax').value) || 900);
+                data.randomMinSeconds = min;
+                data.randomMaxSeconds = max;
             }
 
             if (msgId) {
@@ -728,9 +728,9 @@
                 if (msg) {
                     document.getElementById('editorContent').value = msg.content;
                     document.getElementById('editorMode').value = msg.scheduleMode;
-                    document.getElementById('editorFixedInterval').value = msg.fixedIntervalMinutes;
-                    document.getElementById('editorRandomMin').value = msg.randomMinMinutes;
-                    document.getElementById('editorRandomMax').value = msg.randomMaxMinutes;
+                    document.getElementById('editorFixedInterval').value = msg.fixedIntervalSeconds;
+                    document.getElementById('editorRandomMin').value = msg.randomMinSeconds;
+                    document.getElementById('editorRandomMax').value = msg.randomMaxSeconds;
                     document.getElementById('editorMode').dispatchEvent(new Event('change'));
                 }
             } else {
@@ -738,9 +738,9 @@
                 document.getElementById('editorMsgId').value = '';
                 document.getElementById('editorContent').value = '';
                 document.getElementById('editorMode').value = 'fixed';
-                document.getElementById('editorFixedInterval').value = 10;
-                document.getElementById('editorRandomMin').value = 5;
-                document.getElementById('editorRandomMax').value = 15;
+                document.getElementById('editorFixedInterval').value = 600;
+                document.getElementById('editorRandomMin').value = 300;
+                document.getElementById('editorRandomMax').value = 900;
                 document.getElementById('editorMode').dispatchEvent(new Event('change'));
             }
         }

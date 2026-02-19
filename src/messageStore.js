@@ -34,7 +34,7 @@ function saveMessages(messages) {
 
 /**
  * 新增訊息
- * @param {{ content: string, scheduleMode?: string, fixedIntervalMinutes?: number, randomMinMinutes?: number, randomMaxMinutes?: number }} msgData
+ * @param {{ content: string, scheduleMode?: string, fixedIntervalSeconds?: number, randomMinSeconds?: number, randomMaxSeconds?: number }} msgData
  * @returns {Array}
  */
 function addMessage(msgData) {
@@ -43,9 +43,9 @@ function addMessage(msgData) {
         id: generateId(),
         content: msgData.content || '',
         scheduleMode: msgData.scheduleMode || 'fixed',
-        fixedIntervalMinutes: msgData.fixedIntervalMinutes || 10,
-        randomMinMinutes: msgData.randomMinMinutes || 5,
-        randomMaxMinutes: msgData.randomMaxMinutes || 15,
+        fixedIntervalSeconds: msgData.fixedIntervalSeconds || 600,
+        randomMinSeconds: msgData.randomMinSeconds || 300,
+        randomMaxSeconds: msgData.randomMaxSeconds || 900,
         enabled: true,
         createdAt: Date.now()
     });

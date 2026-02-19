@@ -4,16 +4,16 @@ var timers = new Map(); // id -> timeoutId
 
 /**
  * 計算下次發送的延遲毫秒數
- * @param {{ scheduleMode: string, fixedIntervalMinutes: number, randomMinMinutes: number, randomMaxMinutes: number }} msg
+ * @param {{ scheduleMode: string, fixedIntervalSeconds: number, randomMinSeconds: number, randomMaxSeconds: number }} msg
  * @returns {number}
  */
 function calculateDelay(msg) {
     if (msg.scheduleMode === 'random') {
-        var min = msg.randomMinMinutes * 60 * 1000;
-        var max = msg.randomMaxMinutes * 60 * 1000;
+        var min = msg.randomMinSeconds * 1000;
+        var max = msg.randomMaxSeconds * 1000;
         return min + Math.random() * (max - min);
     }
-    return msg.fixedIntervalMinutes * 60 * 1000;
+    return msg.fixedIntervalSeconds * 1000;
 }
 
 /**

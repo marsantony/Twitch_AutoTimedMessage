@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { addLog, formatTimestamp, formatCountdown, formatMinutes } from '../src/utils.js';
+import { addLog, formatTimestamp, formatCountdown, formatSeconds } from '../src/utils.js';
 
 describe('addLog', () => {
     it('新訊息插入 textarea 最前面', () => {
@@ -55,13 +55,19 @@ describe('formatCountdown', () => {
     });
 });
 
-describe('formatMinutes', () => {
-    it('大於等於 1 分鐘時顯示分鐘', () => {
-        expect(formatMinutes(10)).toBe('10 分鐘');
-        expect(formatMinutes(1)).toBe('1 分鐘');
+describe('formatSeconds', () => {
+    it('大於等於 60 秒且整除時顯示分鐘', () => {
+        expect(formatSeconds(600)).toBe('10 分鐘');
+        expect(formatSeconds(60)).toBe('1 分鐘');
     });
 
-    it('小於 1 分鐘時顯示秒數', () => {
-        expect(formatMinutes(0.5)).toBe('30 秒');
+    it('大於等於 60 秒且有餘數時顯示分秒', () => {
+        expect(formatSeconds(90)).toBe('1 分 30 秒');
+        expect(formatSeconds(125)).toBe('2 分 5 秒');
+    });
+
+    it('小於 60 秒時顯示秒數', () => {
+        expect(formatSeconds(30)).toBe('30 秒');
+        expect(formatSeconds(1)).toBe('1 秒');
     });
 });

@@ -40,8 +40,8 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalMinutes: 10, enabled: true },
-                    { id: 'b', content: 'world', scheduleMode: 'fixed', fixedIntervalMinutes: 5, enabled: true },
+                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalSeconds: 600, enabled: true },
+                    { id: 'b', content: 'world', scheduleMode: 'fixed', fixedIntervalSeconds: 300, enabled: true },
                 ]
             });
 
@@ -54,7 +54,7 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalMinutes: 10, enabled: false },
+                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalSeconds: 600, enabled: false },
                 ]
             });
 
@@ -66,12 +66,12 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalMinutes: 10, enabled: true },
+                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalSeconds: 600, enabled: true },
                 ]
             });
 
             posted.length = 0;
-            vi.advanceTimersByTime(10 * 60 * 1000);
+            vi.advanceTimersByTime(600 * 1000);
 
             const sends = posted.filter(m => m.type === 'sendMessage');
             expect(sends).toHaveLength(1);
@@ -83,17 +83,17 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalMinutes: 5, enabled: true },
+                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalSeconds: 300, enabled: true },
                 ]
             });
 
             posted.length = 0;
-            vi.advanceTimersByTime(5 * 60 * 1000);
+            vi.advanceTimersByTime(300 * 1000);
             expect(posted.filter(m => m.type === 'sendMessage')).toHaveLength(1);
 
             // 第二次排程也應該觸發
             posted.length = 0;
-            vi.advanceTimersByTime(5 * 60 * 1000);
+            vi.advanceTimersByTime(300 * 1000);
             expect(posted.filter(m => m.type === 'sendMessage')).toHaveLength(1);
         });
 
@@ -103,14 +103,14 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'hi', scheduleMode: 'random', randomMinMinutes: 5, randomMaxMinutes: 15, enabled: true },
+                    { id: 'a', content: 'hi', scheduleMode: 'random', randomMinSeconds: 300, randomMaxSeconds: 900, enabled: true },
                 ]
             });
 
             const timerInfo = posted.find(m => m.type === 'timerInfo');
             const delay = timerInfo.nextSendAt - Date.now();
-            // random=0.5 → delay = 5*60000 + 0.5*(15-5)*60000 = 300000 + 300000 = 600000 (10分鐘)
-            expect(delay).toBe(10 * 60 * 1000);
+            // random=0.5 → delay = 300*1000 + 0.5*(900-300)*1000 = 300000 + 300000 = 600000 (600秒)
+            expect(delay).toBe(600 * 1000);
 
             Math.random.mockRestore();
         });
@@ -121,7 +121,7 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalMinutes: 5, enabled: true },
+                    { id: 'a', content: 'hello', scheduleMode: 'fixed', fixedIntervalSeconds: 300, enabled: true },
                 ]
             });
 
@@ -132,7 +132,7 @@ describe('timerWorker', () => {
 
             // 時間推進後不應有 sendMessage
             posted.length = 0;
-            vi.advanceTimersByTime(10 * 60 * 1000);
+            vi.advanceTimersByTime(600 * 1000);
             expect(posted.filter(m => m.type === 'sendMessage')).toHaveLength(0);
         });
     });
@@ -142,7 +142,7 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'start',
                 messages: [
-                    { id: 'a', content: 'old', scheduleMode: 'fixed', fixedIntervalMinutes: 10, enabled: true },
+                    { id: 'a', content: 'old', scheduleMode: 'fixed', fixedIntervalSeconds: 600, enabled: true },
                 ]
             });
 
@@ -150,7 +150,7 @@ describe('timerWorker', () => {
             sendToWorker({
                 type: 'updateMessages',
                 messages: [
-                    { id: 'a', content: 'new', scheduleMode: 'fixed', fixedIntervalMinutes: 2, enabled: true },
+                    { id: 'a', content: 'new', scheduleMode: 'fixed', fixedIntervalSeconds: 120, enabled: true },
                 ]
             });
 
@@ -158,9 +158,9 @@ describe('timerWorker', () => {
             const timerInfos = posted.filter(m => m.type === 'timerInfo');
             expect(timerInfos).toHaveLength(1);
 
-            // 2 分鐘後應發送新內容
+            // 120 秒後應發送新內容
             posted.length = 0;
-            vi.advanceTimersByTime(2 * 60 * 1000);
+            vi.advanceTimersByTime(120 * 1000);
             const sends = posted.filter(m => m.type === 'sendMessage');
             expect(sends).toHaveLength(1);
             expect(sends[0].content).toBe('new');

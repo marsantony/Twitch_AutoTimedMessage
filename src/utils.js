@@ -29,15 +29,19 @@ function formatCountdown(targetMs) {
 }
 
 /**
- * 分鐘數格式化為人類可讀
- * @param {number} minutes
+ * 秒數格式化為人類可讀
+ * @param {number} seconds
  * @returns {string}
  */
-function formatMinutes(minutes) {
-    if (minutes < 1) return Math.round(minutes * 60) + ' 秒';
-    return minutes + ' 分鐘';
+function formatSeconds(seconds) {
+    if (seconds >= 60) {
+        var mins = Math.floor(seconds / 60);
+        var secs = seconds % 60;
+        return secs > 0 ? mins + ' 分 ' + secs + ' 秒' : mins + ' 分鐘';
+    }
+    return seconds + ' 秒';
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { addLog, formatTimestamp, formatCountdown, formatMinutes };
+    module.exports = { addLog, formatTimestamp, formatCountdown, formatSeconds };
 }
