@@ -9,6 +9,10 @@ globalThis.loadMessages = store.loadMessages;
 globalThis.saveMessages = store.saveMessages;
 globalThis.addMessage = store.addMessage;
 globalThis.STORAGE_CHANNEL = store.STORAGE_CHANNEL;
+globalThis.TwitchAuth = {
+    getToken: () => sessionStorage.getItem('Twitch_OAuthToken') || '',
+    getUsername: () => sessionStorage.getItem('Twitch_OAuthUsername') || '',
+};
 
 function createMockTmiClient() {
     return {

@@ -18,7 +18,11 @@ class TimedMessageManager {
     #connect() {
         this.#disconnect();
         var channelEl = document.getElementById('channel');
-        this.#channel = channelEl.value;
+        if (channelEl.value === '__custom__') {
+            this.#channel = (document.getElementById('customChannel')?.value || '').trim();
+        } else {
+            this.#channel = channelEl.value;
+        }
 
         this.#client = this.#tmiClientFactory({
             options: {
@@ -31,8 +35,8 @@ class TimedMessageManager {
                 secure: true
             },
             identity: {
-                username: sessionStorage.getItem('Twitch_OAuthUsername') || '',
-                password: sessionStorage.getItem('Twitch_OAuthToken') || ''
+                username: TwitchAuth.getUsername(),
+                password: TwitchAuth.getToken()
             },
             channels: [this.#channel]
         });

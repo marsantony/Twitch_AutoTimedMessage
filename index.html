@@ -425,7 +425,13 @@
             <select id="channel">
                 <option value="shuteye_orange">蝦愛橘子</option>
                 <option value="marsantonymars">姬柊雪菜我老婆</option>
+                <option value="__custom__">自訂...</option>
             </select>
+        </div>
+
+        <div id="customChannelFields" class="form-group" style="display:none;">
+            <label for="customChannel">頻道名稱（Twitch 帳號）</label>
+            <input type="text" id="customChannel" />
         </div>
 
         <!-- 登入/登出 -->
@@ -572,17 +578,36 @@
                 manager.stop();
                 updateRunningUI(false);
             }
-            TwitchAuth.logout();
-            updateAuthUI();
+            TwitchAuth.logout().then(function () {
+                updateAuthUI();
+            });
         });
 
         // ── Channel persistence ──
+        var channelEl = document.getElementById('channel');
+        var customFields = document.getElementById('customChannelFields');
+        var customChannelEl = document.getElementById('customChannel');
+
+        function toggleCustomFields() {
+            customFields.style.display = channelEl.value === '__custom__' ? '' : 'none';
+        }
+
         var savedChannel = localStorage.getItem(STORAGE_CHANNEL);
         if (savedChannel) {
-            document.getElementById('channel').value = savedChannel;
+            channelEl.value = savedChannel;
+            if (channelEl.value !== savedChannel) {
+                channelEl.value = channelEl.options[0].value;
+            }
         }
-        document.getElementById('channel').addEventListener('change', function () {
-            localStorage.setItem(STORAGE_CHANNEL, this.value);
+        customChannelEl.value = localStorage.getItem('Twitch_AutoTimedMessage_CustomChannel') || '';
+        toggleCustomFields();
+
+        channelEl.addEventListener('change', function () {
+            localStorage.setItem(STORAGE_CHANNEL, channelEl.value);
+            toggleCustomFields();
+        });
+        customChannelEl.addEventListener('input', function () {
+            localStorage.setItem('Twitch_AutoTimedMessage_CustomChannel', customChannelEl.value);
         });
 
         // ── Message List Rendering ──
@@ -810,7 +835,12 @@
 
         // ── Init ──
         renderMessageList();
-        updateAuthUI();
+
+        TwitchAuth.tryRestore().then(function () {
+            updateAuthUI();
+        }).catch(function () {
+            updateAuthUI();
+        });
     </script>
 </body>
 
