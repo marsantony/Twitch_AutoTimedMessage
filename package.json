@@ -4,7 +4,8 @@
   "description": "Twitch 聊天室定時發話工具 ── 使用自己的帳號，定時自動發送多則訊息到聊天室。",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
