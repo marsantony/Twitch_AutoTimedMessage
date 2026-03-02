@@ -599,7 +599,7 @@
                 channelEl.value = channelEl.options[0].value;
             }
         }
-        customChannelEl.value = localStorage.getItem('Twitch_AutoTimedMessage_CustomChannel') || '';
+        customChannelEl.value = localStorage.getItem(STORAGE_CUSTOMCHANNEL) || '';
         toggleCustomFields();
 
         channelEl.addEventListener('change', function () {
@@ -607,7 +607,7 @@
             toggleCustomFields();
         });
         customChannelEl.addEventListener('input', function () {
-            localStorage.setItem('Twitch_AutoTimedMessage_CustomChannel', customChannelEl.value);
+            localStorage.setItem(STORAGE_CUSTOMCHANNEL, customChannelEl.value);
         });
 
         // ── Message List Rendering ──
@@ -658,14 +658,6 @@
         // ── Message List Event Delegation ──
         document.getElementById('messageList').addEventListener('click', function (e) {
             var target = e.target;
-
-            // Toggle
-            if (target.dataset.toggleId) {
-                toggleMessage(target.dataset.toggleId);
-                renderMessageList();
-                manager.refreshMessages();
-                return;
-            }
 
             // Edit
             var editId = target.dataset.editId;

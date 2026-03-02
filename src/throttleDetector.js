@@ -7,6 +7,7 @@ class ThrottleDetector {
     #intervalId = null;
     #lastTick = 0;
     #threshold = 2000; // 如果 1000ms 的 interval 超過 2000ms 才觸發，表示被節流
+    #visibilityHandler = null;
 
     constructor(statusElId) {
         this.#statusEl = document.getElementById(statusElId);
@@ -22,9 +23,8 @@ class ThrottleDetector {
             this.#updateDisplay(throttled, elapsed);
         }, 1000);
 
-        document.addEventListener('visibilitychange', () => {
-            this.#updateVisibility();
-        });
+        this.#visibilityHandler = () => { this.#updateVisibility(); };
+        document.addEventListener('visibilitychange', this.#visibilityHandler);
         this.#updateVisibility();
     }
 
@@ -32,6 +32,10 @@ class ThrottleDetector {
         if (this.#intervalId) {
             clearInterval(this.#intervalId);
             this.#intervalId = null;
+        }
+        if (this.#visibilityHandler) {
+            document.removeEventListener('visibilitychange', this.#visibilityHandler);
+            this.#visibilityHandler = null;
         }
     }
 

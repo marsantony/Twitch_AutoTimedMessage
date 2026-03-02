@@ -2,6 +2,7 @@
 
 var STORAGE_MESSAGES = 'Twitch_AutoTimedMessage_Messages';
 var STORAGE_CHANNEL = 'Twitch_AutoTimedMessage_Channel';
+var STORAGE_CUSTOMCHANNEL = 'Twitch_AutoTimedMessage_CustomChannel';
 
 /**
  * 產生唯一 ID
@@ -53,6 +54,13 @@ function addMessage(msgData) {
     return messages;
 }
 
+function findMessageIndex(messages, id) {
+    for (var i = 0; i < messages.length; i++) {
+        if (messages[i].id === id) return i;
+    }
+    return -1;
+}
+
 /**
  * 更新訊息
  * @param {string} id
@@ -61,12 +69,8 @@ function addMessage(msgData) {
  */
 function updateMessage(id, updates) {
     var messages = loadMessages();
-    for (var i = 0; i < messages.length; i++) {
-        if (messages[i].id === id) {
-            Object.assign(messages[i], updates);
-            break;
-        }
-    }
+    var idx = findMessageIndex(messages, id);
+    if (idx !== -1) Object.assign(messages[idx], updates);
     saveMessages(messages);
     return messages;
 }
@@ -89,19 +93,15 @@ function deleteMessage(id) {
  */
 function toggleMessage(id) {
     var messages = loadMessages();
-    for (var i = 0; i < messages.length; i++) {
-        if (messages[i].id === id) {
-            messages[i].enabled = !messages[i].enabled;
-            break;
-        }
-    }
+    var idx = findMessageIndex(messages, id);
+    if (idx !== -1) messages[idx].enabled = !messages[idx].enabled;
     saveMessages(messages);
     return messages;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        STORAGE_MESSAGES, STORAGE_CHANNEL, generateId,
+        STORAGE_MESSAGES, STORAGE_CHANNEL, STORAGE_CUSTOMCHANNEL, generateId,
         loadMessages, saveMessages, addMessage, updateMessage, deleteMessage, toggleMessage
     };
 }
