@@ -17,7 +17,7 @@ class TimedMessageManager {
 
     #connect() {
         this.#disconnect();
-        var channelEl = document.getElementById('channel');
+        const channelEl = document.getElementById('channel');
         if (channelEl.value === '__custom__') {
             this.#channel = (document.getElementById('customChannel')?.value || '').trim();
         } else {
@@ -41,15 +41,15 @@ class TimedMessageManager {
             channels: [this.#channel]
         });
 
-        this.#client.connect().catch(function (err) {
-            var logEl = document.getElementById('log');
+        this.#client.connect().catch((err) => {
+            const logEl = document.getElementById('log');
             addLog(logEl, '[錯誤] IRC 連線失敗: ' + err.message);
         });
     }
 
     #disconnect() {
         if (this.#client) {
-            this.#client.disconnect().catch(function () {});
+            this.#client.disconnect().catch(() => {});
             this.#client = null;
         }
     }
@@ -57,7 +57,7 @@ class TimedMessageManager {
     #initWorker() {
         this.#worker = this.#workerFactory();
         this.#worker.onmessage = (e) => {
-            var data = e.data;
+            const data = e.data;
             switch (data.type) {
                 case 'sendMessage':
                     this.#sendToChat(data.id, data.content);
@@ -71,18 +71,18 @@ class TimedMessageManager {
 
     #sendToChat(id, content) {
         if (!this.#client || !this.#isRunning) return;
-        var logEl = document.getElementById('log');
+        const logEl = document.getElementById('log');
 
-        this.#client.say(this.#channel, content).then(function () {
-            var timestamp = formatTimestamp();
+        this.#client.say(this.#channel, content).then(() => {
+            const timestamp = formatTimestamp();
             addLog(logEl, timestamp + ' [已發送] ' + content);
-        }).catch(function (err) {
+        }).catch((err) => {
             addLog(logEl, '[錯誤] 發送失敗: ' + err.message);
         });
     }
 
     #updateTimerDisplay(id, nextSendAt) {
-        var el = document.querySelector('[data-msg-id="' + id + '"] .next-send');
+        const el = document.querySelector('[data-msg-id="' + id + '"] .next-send');
         if (el) {
             el.dataset.nextSendAt = nextSendAt;
         }
@@ -91,7 +91,7 @@ class TimedMessageManager {
     start() {
         this.#connect();
         this.#initWorker();
-        var messages = loadMessages();
+        const messages = loadMessages();
         this.#worker.postMessage({ type: 'start', messages: messages });
         this.#isRunning = true;
     }
@@ -108,7 +108,7 @@ class TimedMessageManager {
 
     refreshMessages() {
         if (this.#worker && this.#isRunning) {
-            var messages = loadMessages();
+            const messages = loadMessages();
             this.#worker.postMessage({ type: 'updateMessages', messages: messages });
         }
     }

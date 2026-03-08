@@ -1,6 +1,6 @@
 /* Web Worker：管理所有訊息的定時排程 */
 
-var timers = new Map(); // id -> timeoutId
+const timers = new Map(); // id -> timeoutId
 
 /**
  * 計算下次發送的延遲毫秒數
@@ -9,8 +9,8 @@ var timers = new Map(); // id -> timeoutId
  */
 function calculateDelay(msg) {
     if (msg.scheduleMode === 'random') {
-        var min = msg.randomMinSeconds * 1000;
-        var max = msg.randomMaxSeconds * 1000;
+        const min = msg.randomMinSeconds * 1000;
+        const max = msg.randomMaxSeconds * 1000;
         return min + Math.random() * (max - min);
     }
     return msg.fixedIntervalSeconds * 1000;
@@ -23,10 +23,10 @@ function calculateDelay(msg) {
 function scheduleMessage(msg) {
     if (!msg.enabled) return;
 
-    var delay = calculateDelay(msg);
-    var nextSendAt = Date.now() + delay;
+    const delay = calculateDelay(msg);
+    const nextSendAt = Date.now() + delay;
 
-    var timeoutId = setTimeout(function () {
+    const timeoutId = setTimeout(() => {
         self.postMessage({ type: 'sendMessage', id: msg.id, content: msg.content });
         scheduleMessage(msg);
     }, delay);
@@ -39,29 +39,25 @@ function scheduleMessage(msg) {
  * 停止所有計時器
  */
 function stopAll() {
-    timers.forEach(function (timeoutId) {
+    timers.forEach((timeoutId) => {
         clearTimeout(timeoutId);
     });
     timers.clear();
 }
 
-self.onmessage = function (e) {
-    var data = e.data;
+self.onmessage = (e) => {
+    const data = e.data;
 
     switch (data.type) {
         case 'start':
+        case 'updateMessages':
             stopAll();
-            data.messages.filter(function (m) { return m.enabled; }).forEach(scheduleMessage);
+            data.messages.filter((m) => m.enabled).forEach(scheduleMessage);
             break;
 
         case 'stop':
             stopAll();
             self.postMessage({ type: 'stopped' });
-            break;
-
-        case 'updateMessages':
-            stopAll();
-            data.messages.filter(function (m) { return m.enabled; }).forEach(scheduleMessage);
             break;
     }
 };

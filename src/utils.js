@@ -22,9 +22,9 @@ function formatTimestamp(timestamp) {
  * @returns {string}
  */
 function formatCountdown(targetMs) {
-    var diff = Math.max(0, targetMs - Date.now());
-    var mins = Math.floor(diff / 60000);
-    var secs = Math.floor((diff % 60000) / 1000);
+    const diff = Math.max(0, targetMs - Date.now());
+    const mins = Math.floor(diff / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
     return mins + ':' + (secs < 10 ? '0' : '') + secs;
 }
 
@@ -35,8 +35,8 @@ function formatCountdown(targetMs) {
  */
 function formatSeconds(seconds) {
     if (seconds >= 60) {
-        var mins = Math.floor(seconds / 60);
-        var secs = seconds % 60;
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
         return secs > 0 ? mins + ' 分 ' + secs + ' 秒' : mins + ' 分鐘';
     }
     return seconds + ' 秒';

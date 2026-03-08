@@ -16,10 +16,10 @@ class ThrottleDetector {
     start() {
         this.#lastTick = Date.now();
         this.#intervalId = setInterval(() => {
-            var now = Date.now();
-            var elapsed = now - this.#lastTick;
+            const now = Date.now();
+            const elapsed = now - this.#lastTick;
             this.#lastTick = now;
-            var throttled = elapsed > this.#threshold;
+            const throttled = elapsed > this.#threshold;
             this.#updateDisplay(throttled, elapsed);
         }, 1000);
 

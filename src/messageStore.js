@@ -1,8 +1,8 @@
 /* global localStorage */
 
-var STORAGE_MESSAGES = 'Twitch_AutoTimedMessage_Messages';
-var STORAGE_CHANNEL = 'Twitch_AutoTimedMessage_Channel';
-var STORAGE_CUSTOMCHANNEL = 'Twitch_AutoTimedMessage_CustomChannel';
+const STORAGE_MESSAGES = 'Twitch_AutoTimedMessage_Messages';
+const STORAGE_CHANNEL = 'Twitch_AutoTimedMessage_Channel';
+const STORAGE_CUSTOMCHANNEL = 'Twitch_AutoTimedMessage_CustomChannel';
 
 /**
  * 產生唯一 ID
@@ -18,7 +18,7 @@ function generateId() {
  */
 function loadMessages() {
     try {
-        var data = localStorage.getItem(STORAGE_MESSAGES);
+        const data = localStorage.getItem(STORAGE_MESSAGES);
         return data ? JSON.parse(data) : [];
     } catch (e) {
         return [];
@@ -39,7 +39,7 @@ function saveMessages(messages) {
  * @returns {Array}
  */
 function addMessage(msgData) {
-    var messages = loadMessages();
+    const messages = loadMessages();
     messages.push({
         id: generateId(),
         content: msgData.content || '',
@@ -55,10 +55,7 @@ function addMessage(msgData) {
 }
 
 function findMessageIndex(messages, id) {
-    for (var i = 0; i < messages.length; i++) {
-        if (messages[i].id === id) return i;
-    }
-    return -1;
+    return messages.findIndex((m) => m.id === id);
 }
 
 /**
@@ -68,8 +65,8 @@ function findMessageIndex(messages, id) {
  * @returns {Array}
  */
 function updateMessage(id, updates) {
-    var messages = loadMessages();
-    var idx = findMessageIndex(messages, id);
+    const messages = loadMessages();
+    const idx = findMessageIndex(messages, id);
     if (idx !== -1) Object.assign(messages[idx], updates);
     saveMessages(messages);
     return messages;
@@ -81,7 +78,7 @@ function updateMessage(id, updates) {
  * @returns {Array}
  */
 function deleteMessage(id) {
-    var messages = loadMessages().filter(function (m) { return m.id !== id; });
+    const messages = loadMessages().filter((m) => m.id !== id);
     saveMessages(messages);
     return messages;
 }
@@ -92,8 +89,8 @@ function deleteMessage(id) {
  * @returns {Array}
  */
 function toggleMessage(id) {
-    var messages = loadMessages();
-    var idx = findMessageIndex(messages, id);
+    const messages = loadMessages();
+    const idx = findMessageIndex(messages, id);
     if (idx !== -1) messages[idx].enabled = !messages[idx].enabled;
     saveMessages(messages);
     return messages;

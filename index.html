@@ -6,16 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitch 定時發話</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://marsantony.github.io/shared/nav.css">
     <style>
+        :root {
+            --bg: #c8ccd6;
+            --shadow-dark: #a0a4ae;
+            --shadow-light: #f0f4fc;
+            --text-primary: #2a3040;
+            --text-secondary: #505868;
+            --text-muted: #808898;
+            --accent: #5a7aed;
+            --danger: #c0392b;
+            --success: #2d7a4f;
+            --warning: #b8860b;
+            --neu-raised: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            --neu-raised-sm: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+            --neu-pressed: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            --nav-bg: rgba(208, 212, 222, 0.4);
+            --nav-text: #2a3040;
+            --nav-text-secondary: #505868;
+            --footer-border: #bec2ca;
+            --footer-text: #808898;
+            --footer-link-color: #5a7aed;
+        }
+
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Nunito Sans', sans-serif;
-            background: linear-gradient(180deg, #dcdfe4 0%, #d4d7dd 30%, #cfd2d8 70%, #c9ccd3 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background:
+                radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.35) 0%, transparent 50%),
+                repeating-linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.12) 0px,
+                    rgba(255,255,255,0) 1px,
+                    rgba(0,0,0,0.08) 1px,
+                    rgba(0,0,0,0) 2px
+                ),
+                linear-gradient(135deg, #f0f2f6 0%, #d8dce4 25%, #c4c8d2 50%, #aeb2bc 80%, #a0a4ae 100%);
             background-attachment: fixed;
-            color: #5a5f6b;
+            color: var(--text-secondary);
             line-height: 1.6;
             padding-top: 56px;
         }
@@ -28,11 +59,11 @@
 
         h1 {
             font-size: 1.5rem;
-            font-weight: 700;
-            color: #3a3f4a;
+            font-weight: 600;
+            color: var(--text-primary);
             margin-bottom: 2rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #c0c3c9;
+            border-bottom: 2px solid var(--shadow-dark);
         }
 
         /* ── Form ── */
@@ -42,9 +73,10 @@
 
         .form-group label {
             display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #3a3f4a;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
             margin-bottom: 0.4rem;
         }
 
@@ -56,11 +88,11 @@
             padding: 0.7rem 1rem;
             border: none;
             border-radius: 12px;
-            background: #d4d7dd;
-            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-pressed);
             font-family: inherit;
             font-size: 0.9rem;
-            color: #3a3f4a;
+            color: var(--text-primary);
             outline: none;
             transition: box-shadow 0.2s;
         }
@@ -69,13 +101,13 @@
         input[type="number"]:focus,
         select:focus,
         textarea:focus {
-            box-shadow: inset 4px 4px 8px #a8abb1, inset -4px -4px 8px #fafbfd;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
         }
 
         select {
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5f6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23505868' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 1rem center;
             padding-right: 2.5rem;
@@ -88,6 +120,8 @@
 
         textarea {
             resize: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
         }
 
         /* ── Buttons ── */
@@ -103,45 +137,48 @@
             padding: 0.6rem 1.25rem;
             border: none;
             border-radius: 12px;
-            background: #d4d7dd;
-            box-shadow: 4px 4px 8px #b0b3b9, -4px -4px 8px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-raised-sm);
             font-family: inherit;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: box-shadow 0.2s;
+            transition: box-shadow 0.2s, color 0.2s;
+            color: var(--text-secondary);
         }
 
         .btn:hover {
-            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+            box-shadow: var(--neu-pressed);
+            color: var(--accent);
         }
 
         .btn:active {
-            box-shadow: inset 4px 4px 8px #a8abb1, inset -4px -4px 8px #fafbfd;
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
         }
 
         .btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
-            box-shadow: 2px 2px 4px #b0b3b9, -2px -2px 4px #f5f6f8;
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
         }
 
         .btn:disabled:hover {
-            box-shadow: 2px 2px 4px #b0b3b9, -2px -2px 4px #f5f6f8;
+            box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+            color: var(--text-secondary);
         }
 
-        .btn-success { color: #2d7a4f; }
-        .btn-primary { color: #3a6fb5; }
-        .btn-danger  { color: #c0392b; }
+        .btn-success { color: var(--success); }
+        .btn-primary { color: var(--accent); }
+        .btn-danger  { color: var(--danger); }
         .btn-sm {
             padding: 0.35rem 0.75rem;
             font-size: 0.8rem;
-            box-shadow: 3px 3px 6px #b0b3b9, -3px -3px 6px #f5f6f8;
+            box-shadow: var(--neu-raised-sm);
         }
 
         .auth-hint {
             font-size: 0.8rem;
-            color: #c0392b;
+            color: var(--danger);
             margin-bottom: 1rem;
             display: none;
         }
@@ -154,29 +191,29 @@
             margin-bottom: 1.25rem;
             padding: 0.75rem 1rem;
             border-radius: 12px;
-            background: #d4d7dd;
-            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-pressed);
         }
 
         .auth-section .auth-username {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #3a3f4a;
+            color: var(--text-primary);
             flex: 1;
         }
 
         .auth-section .btn {
             padding: 0.4rem 0.75rem;
             font-size: 0.8rem;
-            box-shadow: 3px 3px 6px #b0b3b9, -3px -3px 6px #f5f6f8;
+            box-shadow: var(--neu-raised-sm);
         }
 
         /* ── Notice Box ── */
         .notice-box {
             margin-bottom: 1.5rem;
             border-radius: 12px;
-            background: #d4d7dd;
-            box-shadow: 4px 4px 8px #b0b3b9, -4px -4px 8px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-raised-sm);
             overflow: hidden;
         }
 
@@ -184,16 +221,16 @@
             padding: 0.75rem 1.25rem;
             font-size: 0.85rem;
             font-weight: 600;
-            color: #c0392b;
+            color: var(--danger);
             cursor: pointer;
             list-style: none;
-            border-left: 4px solid #c0392b;
+            border-left: 4px solid var(--danger);
         }
 
         .notice-box summary::-webkit-details-marker { display: none; }
 
         .notice-box summary::after {
-            content: '▸';
+            content: '\25B8';
             float: right;
             transition: transform 0.2s;
         }
@@ -203,7 +240,7 @@
         }
 
         .notice-box[open] summary {
-            border-bottom: 1px solid #c0c3c9;
+            border-bottom: 1px solid var(--shadow-dark);
         }
 
         .notice-body {
@@ -213,7 +250,7 @@
         }
 
         .notice-body code {
-            background: #c8cbd1;
+            background: var(--shadow-dark);
             padding: 0.15rem 0.4rem;
             border-radius: 4px;
             font-size: 0.8rem;
@@ -231,20 +268,20 @@
             margin-top: 0.75rem;
             padding: 0.5rem 0.75rem;
             border-radius: 8px;
-            background: #d4d7dd;
-            box-shadow: inset 2px 2px 4px #b0b3b9, inset -2px -2px 4px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-pressed);
             font-size: 0.83rem;
         }
 
         .throttle-status label {
             font-weight: 600;
-            color: #3a3f4a;
+            color: var(--text-primary);
             margin-right: 0.5rem;
         }
 
-        .status-ok { color: #2d7a4f; font-weight: 600; }
-        .status-warning { color: #b8860b; font-weight: 600; }
-        .status-throttled { color: #c0392b; font-weight: 600; }
+        .status-ok { color: var(--success); font-weight: 600; }
+        .status-warning { color: var(--warning); font-weight: 600; }
+        .status-throttled { color: var(--danger); font-weight: 600; }
 
         /* ── Message Cards ── */
         .msg-list {
@@ -253,8 +290,8 @@
 
         .msg-card {
             border-radius: 12px;
-            background: #d4d7dd;
-            box-shadow: 4px 4px 8px #b0b3b9, -4px -4px 8px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-raised-sm);
             padding: 0.75rem 1rem;
             margin-bottom: 0.75rem;
         }
@@ -274,7 +311,7 @@
             flex: 1;
             font-size: 0.9rem;
             font-weight: 600;
-            color: #3a3f4a;
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -282,12 +319,12 @@
 
         .msg-card-schedule {
             font-size: 0.8rem;
-            color: #8a8f9a;
+            color: var(--text-muted);
             margin-bottom: 0.4rem;
         }
 
         .msg-card-schedule .next-send {
-            color: #3a6fb5;
+            color: var(--accent);
             font-weight: 600;
         }
 
@@ -315,10 +352,10 @@
             position: absolute;
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: #c0c3c9;
+            background: var(--shadow-dark);
             border-radius: 22px;
             transition: 0.2s;
-            box-shadow: inset 2px 2px 4px #a8abb1, inset -2px -2px 4px #d8dbe1;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.15), inset -2px -2px 4px var(--shadow-light);
         }
 
         .toggle-slider::before {
@@ -328,14 +365,14 @@
             width: 16px;
             left: 3px;
             bottom: 3px;
-            background: #d4d7dd;
+            background: var(--bg);
             border-radius: 50%;
             transition: 0.2s;
-            box-shadow: 2px 2px 4px #b0b3b9, -1px -1px 3px #f5f6f8;
+            box-shadow: var(--neu-raised-sm);
         }
 
         .toggle input:checked + .toggle-slider {
-            background: #2d7a4f;
+            background: var(--success);
         }
 
         .toggle input:checked + .toggle-slider::before {
@@ -346,8 +383,8 @@
         .msg-editor {
             display: none;
             border-radius: 12px;
-            background: #d4d7dd;
-            box-shadow: inset 3px 3px 6px #b0b3b9, inset -3px -3px 6px #f5f6f8;
+            background: var(--bg);
+            box-shadow: var(--neu-pressed);
             padding: 1rem 1.25rem;
             margin-bottom: 1.5rem;
         }
@@ -358,8 +395,8 @@
 
         .msg-editor h3 {
             font-size: 0.9rem;
-            font-weight: 700;
-            color: #3a3f4a;
+            font-weight: 600;
+            color: var(--text-primary);
             margin-bottom: 0.75rem;
         }
 
@@ -387,9 +424,10 @@
         }
 
         .connection-status label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #8a8f9a;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
         }
 
         .connection-status span {
@@ -397,20 +435,8 @@
             font-weight: 600;
         }
 
-        .status-connected { color: #2d7a4f; }
-        .status-disconnected { color: #8a8f9a; }
-
-        /* ── Footer ── */
-        footer {
-            border-top: 1px solid #c0c3c9;
-            padding-top: 1rem;
-            margin-top: 1rem;
-        }
-
-        footer small {
-            font-size: 0.75rem;
-            color: #8a8f9a;
-        }
+        .status-connected { color: var(--success); }
+        .status-disconnected { color: var(--text-muted); }
     </style>
 </head>
 
@@ -530,10 +556,6 @@
             <label for="log">活動日誌</label>
             <textarea id="log" rows="10" readonly></textarea>
         </div>
-
-        <footer>
-            <small>Twitch 定時發話工具</small>
-        </footer>
     </div>
 
     <script src="https://marsantony.github.io/shared/twitch-auth.js"></script>
@@ -545,54 +567,63 @@
 
     <script src="https://marsantony.github.io/shared/shared.js"></script>
     <script>
-        var CLIENT_ID = 'iq44451ylnoywa6g8yal91e1ajsu1e';
-        var manager = new TimedMessageManager();
-        var detector = new ThrottleDetector('throttleStatus');
-        var countdownIntervalId = null;
+        const CLIENT_ID = 'iq44451ylnoywa6g8yal91e1ajsu1e';
+        const manager = new TimedMessageManager();
+        const detector = new ThrottleDetector('throttleStatus');
+        let countdownIntervalId = null;
+
+        const authLoggedOutEl = document.getElementById('authLoggedOut');
+        const authLoggedInEl = document.getElementById('authLoggedIn');
+        const authUsernameEl = document.getElementById('authUsername');
+        const startAllEl = document.getElementById('startAll');
+        const stopAllEl = document.getElementById('stopAll');
+        const authHintEl = document.getElementById('authHint');
+        const channelEl = document.getElementById('channel');
+        const customFields = document.getElementById('customChannelFields');
+        const customChannelEl = document.getElementById('customChannel');
+        const connectionStatusEl = document.getElementById('connectionStatus');
+        const logEl = document.getElementById('log');
+        const messageListEl = document.getElementById('messageList');
 
         detector.start();
 
         // ── Auth UI ──
         function updateAuthUI() {
-            var loggedIn = TwitchAuth.isLoggedIn();
+            const loggedIn = TwitchAuth.isLoggedIn();
 
             if (loggedIn) {
-                document.getElementById('authLoggedOut').style.display = 'none';
-                document.getElementById('authLoggedIn').style.display = '';
-                document.getElementById('authUsername').textContent = TwitchAuth.getUsername();
+                authLoggedOutEl.style.display = 'none';
+                authLoggedInEl.style.display = '';
+                authUsernameEl.textContent = TwitchAuth.getUsername();
             } else {
-                document.getElementById('authLoggedOut').style.display = '';
-                document.getElementById('authLoggedIn').style.display = 'none';
+                authLoggedOutEl.style.display = '';
+                authLoggedInEl.style.display = 'none';
             }
 
-            document.getElementById('startAll').disabled = !loggedIn;
-            document.getElementById('authHint').style.display = loggedIn ? 'none' : '';
+            startAllEl.disabled = !loggedIn;
+            authHintEl.style.display = loggedIn ? 'none' : '';
         }
 
-        document.getElementById('twitchLogin').addEventListener('click', function () {
+        document.getElementById('twitchLogin').addEventListener('click', () => {
             TwitchAuth.login(CLIENT_ID);
         });
 
-        document.getElementById('twitchLogout').addEventListener('click', function () {
+        document.getElementById('twitchLogout').addEventListener('click', () => {
             if (manager.isRunning) {
                 manager.stop();
                 updateRunningUI(false);
             }
-            TwitchAuth.logout().then(function () {
+            TwitchAuth.logout().then(() => {
                 updateAuthUI();
             });
         });
 
         // ── Channel persistence ──
-        var channelEl = document.getElementById('channel');
-        var customFields = document.getElementById('customChannelFields');
-        var customChannelEl = document.getElementById('customChannel');
-
         function toggleCustomFields() {
             customFields.style.display = channelEl.value === '__custom__' ? '' : 'none';
         }
 
-        var savedChannel = localStorage.getItem(STORAGE_CHANNEL);
+        const savedChannel = localStorage.getItem(STORAGE_CHANNEL);
         if (savedChannel) {
             channelEl.value = savedChannel;
             if (channelEl.value !== savedChannel) {
@@ -602,26 +633,25 @@
         customChannelEl.value = localStorage.getItem(STORAGE_CUSTOMCHANNEL) || '';
         toggleCustomFields();
 
-        channelEl.addEventListener('change', function () {
+        channelEl.addEventListener('change', () => {
             localStorage.setItem(STORAGE_CHANNEL, channelEl.value);
             toggleCustomFields();
         });
-        customChannelEl.addEventListener('input', function () {
+        customChannelEl.addEventListener('input', () => {
             localStorage.setItem(STORAGE_CUSTOMCHANNEL, customChannelEl.value);
         });
 
         // ── Message List Rendering ──
         function renderMessageList() {
-            var messages = loadMessages();
-            var container = document.getElementById('messageList');
-            container.innerHTML = '';
+            const messages = loadMessages();
+            messageListEl.innerHTML = '';
 
-            messages.forEach(function (msg) {
-                var card = document.createElement('div');
+            messages.forEach((msg) => {
+                const card = document.createElement('div');
                 card.className = 'msg-card' + (msg.enabled ? '' : ' disabled');
                 card.dataset.msgId = msg.id;
 
-                var scheduleText = '';
+                let scheduleText = '';
                 if (msg.scheduleMode === 'fixed') {
                     scheduleText = '固定間隔 ' + formatSeconds(msg.fixedIntervalSeconds);
                 } else {
@@ -645,29 +675,27 @@
                         '<button type="button" class="btn btn-sm btn-danger" data-delete-id="' + msg.id + '">刪除</button>' +
                     '</div>';
 
-                container.appendChild(card);
+                messageListEl.appendChild(card);
             });
         }
 
+        const escapeDiv = document.createElement('div');
         function escapeHtml(text) {
-            var div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+            escapeDiv.textContent = text;
+            return escapeDiv.innerHTML;
         }
 
         // ── Message List Event Delegation ──
-        document.getElementById('messageList').addEventListener('click', function (e) {
-            var target = e.target;
+        messageListEl.addEventListener('click', (e) => {
+            const target = e.target;
 
-            // Edit
-            var editId = target.dataset.editId;
+            const editId = target.dataset.editId;
             if (editId) {
                 openEditor(editId);
                 return;
             }
 
-            // Delete
-            var deleteId = target.dataset.deleteId;
+            const deleteId = target.dataset.deleteId;
             if (deleteId) {
                 deleteMessage(deleteId);
                 renderMessageList();
@@ -675,7 +703,7 @@
             }
         });
 
-        document.getElementById('messageList').addEventListener('change', function (e) {
+        messageListEl.addEventListener('change', (e) => {
             if (e.target.dataset.toggleId) {
                 toggleMessage(e.target.dataset.toggleId);
                 renderMessageList();
@@ -684,30 +712,30 @@
         });
 
         // ── Message Editor ──
-        document.getElementById('addMessageBtn').addEventListener('click', function () {
+        document.getElementById('addMessageBtn').addEventListener('click', () => {
             openEditor(null);
         });
 
         document.getElementById('editorMode').addEventListener('change', function () {
-            var isFixed = this.value === 'fixed';
+            const isFixed = this.value === 'fixed';
             document.getElementById('editorFixedGroup').style.display = isFixed ? '' : 'none';
             document.getElementById('editorRandomGroup').style.display = isFixed ? 'none' : '';
         });
 
-        document.getElementById('editorCancel').addEventListener('click', function () {
+        document.getElementById('editorCancel').addEventListener('click', () => {
             closeEditor();
         });
 
-        document.getElementById('editorSave').addEventListener('click', function () {
-            var msgId = document.getElementById('editorMsgId').value;
-            var content = document.getElementById('editorContent').value.trim();
+        document.getElementById('editorSave').addEventListener('click', () => {
+            const msgId = document.getElementById('editorMsgId').value;
+            const content = document.getElementById('editorContent').value.trim();
             if (!content) {
                 alert('請輸入訊息內容');
                 return;
             }
 
-            var mode = document.getElementById('editorMode').value;
-            var data = {
+            const mode = document.getElementById('editorMode').value;
+            const data = {
                 content: content,
                 scheduleMode: mode
             };
@@ -715,8 +743,8 @@
             if (mode === 'fixed') {
                 data.fixedIntervalSeconds = Math.max(1, parseInt(document.getElementById('editorFixedInterval').value) || 600);
             } else {
-                var min = Math.max(1, parseInt(document.getElementById('editorRandomMin').value) || 300);
-                var max = Math.max(min + 1, parseInt(document.getElementById('editorRandomMax').value) || 900);
+                const min = Math.max(1, parseInt(document.getElementById('editorRandomMin').value) || 300);
+                const max = Math.max(min + 1, parseInt(document.getElementById('editorRandomMax').value) || 900);
                 data.randomMinSeconds = min;
                 data.randomMaxSeconds = max;
             }
@@ -733,15 +761,15 @@
         });
 
         function openEditor(msgId) {
-            var editor = document.getElementById('messageEditor');
+            const editor = document.getElementById('messageEditor');
             editor.classList.add('active');
 
             if (msgId) {
                 document.getElementById('editorTitle').textContent = '編輯訊息';
                 document.getElementById('editorMsgId').value = msgId;
 
-                var messages = loadMessages();
-                var msg = messages.find(function (m) { return m.id === msgId; });
+                const messages = loadMessages();
+                const msg = messages.find((m) => m.id === msgId);
                 if (msg) {
                     document.getElementById('editorContent').value = msg.content;
                     document.getElementById('editorMode').value = msg.scheduleMode;
@@ -768,11 +796,11 @@
 
         // ── Start / Stop ──
         function updateRunningUI(running) {
-            document.getElementById('startAll').style.display = running ? 'none' : '';
-            document.getElementById('stopAll').style.display = running ? '' : 'none';
-            document.getElementById('channel').disabled = running;
-            document.getElementById('connectionStatus').textContent = running ? '已連線' : '未連線';
-            document.getElementById('connectionStatus').className = running ? 'status-connected' : 'status-disconnected';
+            startAllEl.style.display = running ? 'none' : '';
+            stopAllEl.style.display = running ? '' : 'none';
+            channelEl.disabled = running;
+            connectionStatusEl.textContent = running ? '已連線' : '未連線';
+            connectionStatusEl.className = running ? 'status-connected' : 'status-disconnected';
 
             if (running) {
                 startCountdownUpdater();
@@ -783,32 +811,32 @@
             renderMessageList();
         }
 
-        document.getElementById('startAll').addEventListener('click', function () {
-            var messages = loadMessages();
-            var enabledCount = messages.filter(function (m) { return m.enabled; }).length;
+        startAllEl.addEventListener('click', () => {
+            const messages = loadMessages();
+            const enabledCount = messages.filter((m) => m.enabled).length;
             if (enabledCount === 0) {
                 alert('請至少新增並啟用一則訊息');
                 return;
             }
-            localStorage.setItem(STORAGE_CHANNEL, document.getElementById('channel').value);
+            localStorage.setItem(STORAGE_CHANNEL, channelEl.value);
             manager.start();
             updateRunningUI(true);
-            addLog(document.getElementById('log'), formatTimestamp() + ' [系統] 已開始定時發話（' + enabledCount + ' 則訊息）');
+            addLog(logEl, formatTimestamp() + ' [系統] 已開始定時發話（' + enabledCount + ' 則訊息）');
         });
 
-        document.getElementById('stopAll').addEventListener('click', function () {
+        stopAllEl.addEventListener('click', () => {
             manager.stop();
             updateRunningUI(false);
-            addLog(document.getElementById('log'), formatTimestamp() + ' [系統] 已停止定時發話');
+            addLog(logEl, formatTimestamp() + ' [系統] 已停止定時發話');
         });
 
         // ── Countdown Updater ──
         function startCountdownUpdater() {
             stopCountdownUpdater();
-            countdownIntervalId = setInterval(function () {
-                var els = document.querySelectorAll('.next-send[data-next-send-at]');
-                els.forEach(function (el) {
-                    var nextAt = parseInt(el.dataset.nextSendAt);
+            countdownIntervalId = setInterval(() => {
+                const els = document.querySelectorAll('.next-send[data-next-send-at]');
+                els.forEach((el) => {
+                    const nextAt = parseInt(el.dataset.nextSendAt);
                     if (nextAt) {
                         el.textContent = formatCountdown(nextAt);
                     } else {
@@ -828,9 +856,9 @@
         // ── Init ──
         renderMessageList();
 
-        TwitchAuth.tryRestore().then(function () {
+        TwitchAuth.tryRestore().then(() => {
             updateAuthUI();
-        }).catch(function () {
+        }).catch(() => {
             updateAuthUI();
         });
     </script>
