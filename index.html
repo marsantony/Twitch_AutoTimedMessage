@@ -438,109 +438,10 @@
         .status-connected { color: var(--success); }
         .status-disconnected { color: var(--text-muted); }
 
-        /* ── Login Modal ── */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.35);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.25s, visibility 0.25s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            backdrop-filter: blur(6px);
-        }
-
-        .modal-dialog {
-            width: 360px;
-            max-width: calc(100vw - 2rem);
-            border-radius: 14px;
-            background: var(--bg);
-            box-shadow: var(--neu-raised);
-            padding: 1.5rem;
-            transform: translateY(8px);
-            transition: transform 0.25s;
-        }
-
-        .modal-overlay.active .modal-dialog {
-            transform: translateY(0);
-        }
-
-        .modal-dialog h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-dialog p {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.25rem;
-            line-height: 1.6;
-        }
-
-        .modal-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 1.25rem;
-            padding: 0.6rem 0.75rem;
-            border-radius: 10px;
-            background: var(--bg);
-            box-shadow: var(--neu-pressed);
-            cursor: pointer;
-        }
-
-        .modal-checkbox input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: var(--accent);
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .modal-checkbox span {
-            font-size: 0.83rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            user-select: none;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 0.75rem;
-            justify-content: flex-end;
-        }
     </style>
 </head>
 
 <body>
-
-    <!-- 登入確認彈窗 -->
-    <div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
-        <div class="modal-dialog">
-            <h3 id="loginModalTitle">前往 Twitch 授權</h3>
-            <p>即將跳轉到 Twitch 進行登入授權，授權後會自動返回本頁面。</p>
-            <label class="modal-checkbox">
-                <input type="checkbox" id="rememberMe">
-                <span>記住我的登入狀態</span>
-            </label>
-            <div class="modal-actions">
-                <button type="button" class="btn" id="loginCancel">取消</button>
-                <button type="button" class="btn btn-primary" id="loginConfirm">前往授權</button>
-            </div>
-        </div>
-    </div>
 
     <div class="container">
         <h1>Twitch 定時發話</h1>
@@ -704,23 +605,8 @@
             authHintEl.style.display = loggedIn ? 'none' : '';
         }
 
-        const loginModal = document.getElementById('loginModal');
-        const rememberMeEl = document.getElementById('rememberMe');
-
-        function openLoginModal() { loginModal.classList.add('active'); }
-        function closeLoginModal() { loginModal.classList.remove('active'); }
-
-        document.getElementById('twitchLogin').addEventListener('click', openLoginModal);
-        document.getElementById('loginCancel').addEventListener('click', closeLoginModal);
-        loginModal.addEventListener('click', (e) => {
-            if (e.target === loginModal) closeLoginModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && loginModal.classList.contains('active')) closeLoginModal();
-        });
-
-        document.getElementById('loginConfirm').addEventListener('click', () => {
-            TwitchAuth.login(CLIENT_ID, undefined, { rememberMe: rememberMeEl.checked });
+        document.getElementById('twitchLogin').addEventListener('click', () => {
+            TwitchAuth.showLoginDialog(CLIENT_ID);
         });
 
         document.getElementById('twitchLogout').addEventListener('click', () => {
